@@ -7,9 +7,37 @@ import random
 import shelve
 import operator
 numberOfPlayers = 2
+import serial
+
+class Controller:
+    def __init__(self):
+        self.ser = serial.Serial(
+            port='/dev/ttyAMA0',
+            baudrate = 9600,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS,
+            timeout=0
+        )
+    def update(self,flappyBird):
+        numberOfBytesInInputBuffer = self.ser.inWaiting()
+        if numberOfBytesInInputBuffer >= 14:
+            receivedBytes = self.ser.read(14)
+            clickerID = receivedBytes[8:12]
+            clickerState = receivedBytes[4]
+
+            if clickerState.encode('hex') == '10':
+                for birdID in range(0,numberOfPlayers):
+                    if flappyBird.bird[birdID].clickerID == clickerID.encode('hex') and not flappyBird.bird[birdID].dead:
+                        flappyBird.bird[birdID].jump = 17
+                        flappyBird.bird[birdID].gravity = 5
+                        flappyBird.bird[birdID].jumpSpeed = 10
+            
+
+
 wallSpawn = 1000
 distanceOfBirds = 126
-keys = [K_LEFT,K_RIGHT,K_UP,K_DOWN]
+clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
 names = ["nico","clemens","luis","jakob"]
 
 pygame.font.init()
@@ -22,21 +50,21 @@ class savedBirds:
         self.name = ""
 class Bird:
     def __init__(self,id):
-	self.id = id
-	self.name = names[id]
+        self.id = id
+        self.name = names[id]
         self.positionX = distanceOfBirds * id + 70
         self.bird = pygame.Rect(self.positionX, 50, 50, 50)
         self.birdSprites = [pygame.image.load("assets/"+str(id)+"_fly1.png").convert_alpha(),
                             pygame.image.load("assets/"+str(id)+"_fly2.png").convert_alpha(),
                             pygame.image.load("assets/dead.png")]
         self.birdY = 350
+        self.clickerID = clickerIDs[id]
         self.dead = False
         self.sprite = 0
         self.jump = 0
         self.jumpSpeed = 10
         self.gravity = 10
         self.counter = 0
-        self.key = keys[id]
         
 class FlappyBird:
     def __init__(self):
@@ -48,6 +76,7 @@ class FlappyBird:
         self.wallx = wallSpawn
         self.counter = 1
         self.offset = random.randint(-110, 110)
+        self.controller = Controller()
         self.deadBirds = [False for i in range(0,numberOfPlayers)]
         self.bird = [Bird(i) for i in range(0,numberOfPlayers)]
 
@@ -173,23 +202,12 @@ class FlappyBird:
         global font
         while True:
             clock.tick(60)
+
+            self.controller.update(self)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if (event.type == pygame.KEYDOWN ) : #and not self.bird[birdID].dead
-                    birdID = -1
-                    if(event.key == keys[0]) :
-                        birdID = 0
-                    elif (event.key == keys[1]) :
-                        birdID = 1
-                    elif (event.key == keys[2]) :
-                        birdID = 2
-                    elif (event.key == keys[3]) :
-                        birdID = 3
-                    if(birdID != -1 and birdID < numberOfPlayers and not self.bird[birdID].dead) :
-                        self.bird[birdID].jump = 17
-                        self.bird[birdID].gravity = 5
-                        self.bird[birdID].jumpSpeed = 10
 
             self.screen.fill((255, 255, 255))
             self.screen.blit(self.background, (0, 0))
