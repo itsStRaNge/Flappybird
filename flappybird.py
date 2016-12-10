@@ -26,8 +26,8 @@ class Bird:
 	self.name = names[id]
         self.positionX = distanceOfBirds * id + 70
         self.bird = pygame.Rect(self.positionX, 50, 50, 50)
-        self.birdSprites = [pygame.image.load("assets/1.png").convert_alpha(),
-                            pygame.image.load("assets/2.png").convert_alpha(),
+        self.birdSprites = [pygame.image.load("assets/"+str(id)+"_fly1.png").convert_alpha(),
+                            pygame.image.load("assets/"+str(id)+"_fly2.png").convert_alpha(),
                             pygame.image.load("assets/dead.png")]
         self.birdY = 350
         self.dead = False
