@@ -91,6 +91,7 @@ class FlappyBird:
 
 
 
+
         flag = False
         counter = 0
         while not flag:
