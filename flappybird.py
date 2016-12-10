@@ -8,17 +8,17 @@ import random
 
 class Bird:
     def __init__(self):
-        self.bird = pygame.Rect(65, 50, 50, 50)
+        self.bird = pygame.Rect(165, 50, 350, 50)
         self.birdSprites = [pygame.image.load("assets/1.png").convert_alpha(),
                             pygame.image.load("assets/2.png").convert_alpha(),
                             pygame.image.load("assets/dead.png")]
         self.birdY = 350
         self.dead = False
+        self.sprite = 0
         
 class FlappyBird:
     def __init__(self):
-        #self.screen = pygame.display.set_mode((800, 708))
-        self.screen = pygame.display.set_mode((640,480),pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((640,480)) #Make fullscreen
         self.background = pygame.image.load("assets/background.png").convert()
         self.wallUp = pygame.image.load("assets/bottom.png").convert_alpha()
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
@@ -27,11 +27,10 @@ class FlappyBird:
         self.jump = 0
         self.jumpSpeed = 10
         self.gravity = 10
- 
-        self.sprite = 0
         self.counter = 0
         self.offset = random.randint(-110, 110)
         self.bird = Bird()
+		
 
     def updateWalls(self):
         self.wallx -= 2
@@ -43,7 +42,7 @@ class FlappyBird:
     def birdUpdate(self):
         if self.jump:
             self.jumpSpeed -= 1
-            self.dead.birdY -= self.jumpSpeed
+            self.bird.birdY -= self.jumpSpeed
             self.jump -= 1
         else:
             self.bird.birdY += self.gravity
@@ -57,14 +56,14 @@ class FlappyBird:
                                0 - self.gap - self.offset - 10,
                                self.wallDown.get_width() - 10,
                                self.wallDown.get_height())
-        if upRect.colliderect(self.dead.bird):
-            self.dead.dead = True
-        if downRect.colliderect(self.dead.bird):
-            self.dead.dead = True
-        if not 0 < self.bird[1] < 720:
-            self.dead.bird[1] = 50
-            self.dead.birdY = 50
-            self.dead.dead = False
+        if upRect.colliderect(self.bird.bird):
+            self.bird.dead = True
+        if downRect.colliderect(self.bird.bird):
+            self.bird.dead = True
+        if not 0 < self.bird.bird[1] < 720:
+            self.bird.bird[1] = 50
+            self.bird.birdY = 50
+            self.bird.dead = False
             self.counter = 0
             self.wallx = 400
             self.offset = random.randint(-110, 110)
@@ -79,7 +78,7 @@ class FlappyBird:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN) and not self.dead.dead:
+                if (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN) and not self.bird.dead:
                     self.jump = 17
                     self.gravity = 5
                     self.jumpSpeed = 10
@@ -94,13 +93,13 @@ class FlappyBird:
                                          -1,
                                          (255, 255, 255)),
                              (200, 50))
-            if self.dead.dead:
-                self.dead.sprite = 2
+            if self.bird.dead:
+                self.bird.sprite = 2
             elif self.jump:
-                self.dead.sprite = 1
-            self.screen.blit(self.dead.birdSprites[self.dead.sprite], (70, self.dead.birdY))
-            if not self.dead.dead:
-                self.dead.sprite = 0
+                self.bird.sprite = 1
+            self.screen.blit(self.bird.birdSprites[self.bird.sprite], (70, self.bird.birdY))
+            if not self.bird.dead:
+                self.bird.sprite = 0
             self.updateWalls()
             self.birdUpdate()
             pygame.display.update()
