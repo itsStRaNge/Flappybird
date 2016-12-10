@@ -5,7 +5,7 @@ from pygame.locals import *  # noqa
 import sys
 import random
 
-numberOfPlayers = 2
+numberOfPlayers = 3
 screenWidth = 1200
 numberOfWalls = 3
 import shelve
