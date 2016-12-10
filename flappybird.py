@@ -5,7 +5,7 @@ from pygame.locals import *  # noqa
 import sys
 import random
 
-numberOfPlayers = 1
+numberOfPlayers = 2
 screenWidth = 1200
 numberOfWalls = 3
 import shelve
@@ -103,7 +103,7 @@ class Wall:
 class Controller:
     def __init__(self):
         self.ser = serial.Serial(
-            port='/dev/ttyAMA0',
+            port='/dev/tty.Bluetooth-Incoming-Port',
             baudrate = 9600,
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_ONE,
@@ -211,7 +211,8 @@ class FlappyBird:
                     self.bird[i].counter = 0
                     self.bird[i].gravity = 5
                     self.deadBirds[i] = False
-                self.wallx = wallSpawn
+                for i in range(0, numberOfWalls):
+                    self.walls[i].resetWalls()
                 self.offset = random.randint(-110, 110)
                 self.counter = 0
 
@@ -306,8 +307,9 @@ class FlappyBird:
                 self.screen.blit(self.bird[i].birdSprites[self.bird[i].sprite], (self.bird[i].positionX, self.bird[i].birdY))
                 if not self.bird[i].dead:
                     self.bird[i].sprite = 0
-                self.updateWalls()
-                self.birdUpdate(i)               
+                self.birdUpdate(i)
+            for i in range(0, numberOfWalls):
+                self.walls[i].updateWallPosition()
             pygame.display.update()
 
 
