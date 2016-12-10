@@ -4,6 +4,11 @@ import pygame
 from pygame.locals import *  # noqa
 import sys
 import random
+import shelve
+import operator
+
+pygame.font.init()
+font = pygame.font.SysFont("Arial", 50)
 
 
 class FlappyBird:
@@ -56,6 +61,8 @@ class FlappyBird:
         if downRect.colliderect(self.bird):
             self.dead = True
         if not 0 < self.bird[1] < 720:
+            self.crash()
+
             self.bird[1] = 50
             self.birdY = 50
             self.dead = False
@@ -64,10 +71,44 @@ class FlappyBird:
             self.offset = random.randint(-110, 110)
             self.gravity = 5
 
+    def crash(self):
+        # insert highscore window, pause game till buttonpress
+        global font
+        displayScore = self.highscore() #score list of all birds
+
+        self.screen.blit(font.render(str(displayScore),
+                                     -1,
+                                     (255, 0, 0)),
+                         (200, 100))
+
+
+        flag = False
+        while not flag:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    flag = True
+            pygame.display.update()
+
+    def highscore(self):
+        d = shelve.open('score.txt')  # here you will save the score variable
+        d['highscores'] = self.counter
+        # currentScore = d['score']
+        # currentScore.append(self)
+        # currentScore = sorted(currentScore, key=operator.attrgetter('counter'))
+        # currentScore = currentScore[0:4]
+        #
+        # d['score'] = currentScore
+        d.close()
+
+        return currentScore
+
     def run(self):
         clock = pygame.time.Clock()
-        pygame.font.init()
-        font = pygame.font.SysFont("Arial", 50)
+        global font
+
         while True:
             clock.tick(60)
             for event in pygame.event.get():
