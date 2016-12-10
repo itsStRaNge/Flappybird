@@ -24,16 +24,14 @@ class Bird:
         
 class FlappyBird:
     def __init__(self):
-        self.screen = pygame.display.set_mode((640,480))
+        self.screen = pygame.display.set_mode((1000,600))
         self.background = pygame.image.load("assets/background.png").convert()
         self.wallUp = pygame.image.load("assets/bottom.png").convert_alpha()
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
         self.gap = 130
         self.offset = random.randint(-110, 110)
-        self.bird = [numberOfPlayers]
-        for i in xrange(0,numberOfPlayers):
-            self.bird[i] = Bird(i)
-        
+        self.bird = [Bird(i) for i in range(0,numberOfPlayers)]
+
     def updateWalls(self):
         self.bird[0].wallx -= 2
         if self.bird[0].wallx < -80:
