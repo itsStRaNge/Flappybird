@@ -59,6 +59,9 @@ class FlappyBird:
             self.bird[0].counter += 1
             self.offset = random.randint(-110, 110)
             self.counter += 1
+            for i in range(0,numberOfPlayers):
+                if(self.deadBirds[i] == False):
+                    self.bird[i].counter = self.counter
 
     def birdUpdate(self,birdID):
         if self.bird[birdID].jump:
@@ -92,6 +95,7 @@ class FlappyBird:
             #if every Bird is dead, reset
             if(self.flag == False) :
                 for i in range(0,numberOfPlayers) :
+                    self.crash()
                     self.bird[i].bird[1] = 50
                     self.bird[i].birdY = 50
                     self.bird[i].dead = False
