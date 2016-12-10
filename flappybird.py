@@ -16,28 +16,32 @@ class Controller:
             bytesize=serial.EIGHTBITS,
             timeout=0
         )
-    def update(self):
+    def update(self,flappyBird):
         numberOfBytesInInputBuffer = self.ser.inWaiting()
         if numberOfBytesInInputBuffer >= 14:
             receivedBytes = self.ser.read(14)
             clickerID = receivedBytes[8:12]
             clickerState = receivedBytes[4]
 
-            if clickerState.encode('hex') == '10' and not FlappyBird.bird[birdID].dead:
-                FlappyBird.bird[birdID].jump = 17
-                FlappyBird.bird[birdID].gravity = 5
-                FlappyBird.bird[birdID].jumpSpeed = 10
+            if clickerState.encode('hex') == '10':
+                for birdID in range(0,numberOfPlayers):
+                    if flappyBird.bird[birdID].clickerID == clickerID.encode('hex') and not flappyBird.bird[birdID].dead:
+                        flappyBird.bird[birdID].jump = 17
+                        flappyBird.bird[birdID].gravity = 5
+                        flappyBird.bird[birdID].jumpSpeed = 10
+            
 
-numberOfPlayers = 2
+
+numberOfPlayers = 3
 wallSpawn = 1000
 distanceOfBirds = 126
-clickerIDs = ['01a7fd15','12345678']
+clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
 names = ["nico","clemens","luis","jakob"]
 
 class Bird:
     def __init__(self,id):
-	self.id = id
-	self.name = names[id]
+        self.id = id
+        self.name = names[id]
         self.positionX = distanceOfBirds * id + 70
         self.bird = pygame.Rect(self.positionX, 50, 50, 50)
         self.birdSprites = [pygame.image.load("assets/1.png").convert_alpha(),
@@ -109,7 +113,7 @@ class FlappyBird:
         while True:
             clock.tick(60)
 
-            self.controller.update()
+            self.controller.update(self)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
