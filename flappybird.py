@@ -9,7 +9,13 @@ import operator
 numberOfPlayers = 1
 
 pygame.font.init()
-font = pygame.font.SysFont("Arial", 50)
+font = pygame.font.SysFont("Arial", 30)
+
+class savedBirds:
+    def __init__(self,id):
+        self.counter = 0
+        self.id = id
+        self.name = ""
 class Bird:
     def __init__(self,id):
         self.bird = pygame.Rect(65, 50, 50, 50)
@@ -17,14 +23,15 @@ class Bird:
                             pygame.image.load("assets/2.png").convert_alpha(),
                             pygame.image.load("assets/dead.png")]
         self.birdY = 350
-	self.wallx = 350 + id* 50
-	self.id = id
+        self.wallx = 350 + id* 50
+        self.id = id
         self.dead = False
         self.sprite = 0
         self.jump = 0
         self.jumpSpeed = 10
         self.gravity = 10
         self.counter = 0
+        self.name = "juhu"
         
 class FlappyBird:
     def __init__(self):
@@ -32,11 +39,10 @@ class FlappyBird:
         self.background = pygame.image.load("assets/background.png").convert()
         self.wallUp = pygame.image.load("assets/bottom.png").convert_alpha()
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
-        self.gap = 130
+        self.gap = 200
         self.offset = random.randint(-110, 110)
-        self.bird = [numberOfPlayers]
-        for i in xrange(0,numberOfPlayers):
-            self.bird[i] = Bird(i)
+        self.bird = [Bird(i) for i in range(0, numberOfPlayers)]
+        self.savedBirds = [savedBirds(i) for i in range(0, numberOfPlayers)]
         
     def updateWalls(self):
         self.bird[0].wallx -= 2
@@ -62,12 +68,13 @@ class FlappyBird:
                                0 - self.gap - self.offset - 10,
                                self.wallDown.get_width() - 10,
                                self.wallDown.get_height())
-            self.crash()
+
         if upRect.colliderect(self.bird[birdID].bird):
             self.bird[birdID].dead = True
         if downRect.colliderect(self.bird[birdID].bird):
             self.bird[birdID].dead = True
         if not 0 < self.bird[birdID].bird[1] < 720:
+            self.crash()
             self.bird[birdID].bird[1] = 50
             self.bird[birdID].birdY = 50
             self.bird[birdID].dead = False
@@ -77,35 +84,62 @@ class FlappyBird:
             self.bird[birdID].gravity = 5
 
     def crash(self):
+        fontBig = pygame.font.SysFont("Arial", 50,1)
         # insert highscore window, pause game till buttonpress
         global font
         displayScore = self.highscore() #score list of all birds
 
-        self.screen.blit(font.render(str(displayScore),
-                                     -1,
-                                     (255, 0, 0)),
-                         (200, 100))
 
 
         flag = False
+        counter = 0
         while not flag:
+
+            self.screen.blit(self.background, (0, 0))
+            self.screen.blit(fontBig.render("Highscores",
+                                            -1,
+                                            (0, 0, 0)),
+                             (50, 20))
+            for i in range(0, len(displayScore)):
+                self.screen.blit(font.render(str(displayScore[i].counter),
+                                             -1,
+                                             (0, 0, 0)),
+                                 (200, 100 * (i + 1)))
+                self.screen.blit(font.render(str(displayScore[i].name),
+                                             -1,
+                                             (0, 0, 0)),
+                                 (50, 100 * (i + 1)))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
                 if event.type == pygame.KEYDOWN:
                     flag = True
+
+            #display winning bird
+            if counter<15:
+                self.screen.blit(pygame.transform.scale(self.bird[displayScore[0].id].birdSprites[0],(200,200)), (400, 200))
+            elif counter <30:
+                self.screen.blit(pygame.transform.scale(self.bird[displayScore[0].id].birdSprites[1],(200,200)), (400, 200))
+            else:
+                counter = 0
+            counter += 1
             pygame.display.update()
 
     def highscore(self):
+        #copy all birds to savedBirds
         d = shelve.open('score.txt')  # here you will save the score variable
-        d['highscores'] = self.counter
-        # currentScore = d['score']
-        # currentScore.append(self)
-        # currentScore = sorted(currentScore, key=operator.attrgetter('counter'))
-        # currentScore = currentScore[0:4]
-        #
-        # d['score'] = currentScore
+        #d['highscores'] = self.savedBirds
+        currentScore = d['highscores']
+        for i in range(0,len(self.savedBirds)):
+            self.savedBirds[i].counter = self.bird[i].counter
+            self.savedBirds[i].name = self.bird[i].name
+            currentScore.append(self.savedBirds[i])
+
+        currentScore = sorted(currentScore, key=operator.attrgetter('counter'), reverse=True)
+        currentScore = currentScore[0:4]
+        d['highscores'] = currentScore
         d.close()
 
         return currentScore
