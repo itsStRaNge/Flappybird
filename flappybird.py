@@ -4,6 +4,7 @@ import pygame
 from pygame.locals import *  # noqa
 import sys
 import random
+numberOfPlayers = 1
 
 class Bird:
     def __init__(self,id):
@@ -29,81 +30,84 @@ class FlappyBird:
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
         self.gap = 130
         self.offset = random.randint(-110, 110)
-        self.bird = Bird(1)
-		
-
+        self.bird = [numberOfPlayers]
+        for i in xrange(0,numberOfPlayers):
+            self.bird[i] = Bird(i)
+        
     def updateWalls(self):
-        self.bird.wallx -= 2
-        if self.bird.wallx < -80:
-            self.bird.wallx = 350 + 50 * self.bird.id
-            self.bird.counter += 1
+        self.bird[0].wallx -= 2
+        if self.bird[0].wallx < -80:
+            self.bird[0].wallx = 350 + 50 * self.bird[0].id
+            self.bird[0].counter += 1
             self.offset = random.randint(-110, 110)
 
-    def birdUpdate(self,):
-        if self.bird.jump:
-            self.bird.jumpSpeed -= 1
-            self.bird.birdY -= self.bird.jumpSpeed
-            self.bird.jump -= 1
+    def birdUpdate(self,birdID):
+        if self.bird[birdID].jump:
+            self.bird[birdID].jumpSpeed -= 1
+            self.bird[birdID].birdY -= self.bird[birdID].jumpSpeed
+            self.bird[birdID].jump -= 1
         else:
-            self.bird.birdY += self.bird.gravity
-            self.bird.gravity += 0.2
-        self.bird.bird[1] = self.bird.birdY
-        upRect = pygame.Rect(self.bird.wallx,
+            self.bird[birdID].birdY += self.bird[birdID].gravity
+            self.bird[birdID].gravity += 0.2
+        self.bird[birdID].bird[1] = self.bird[birdID].birdY
+        upRect = pygame.Rect(self.bird[birdID].wallx,
                              360 + self.gap - self.offset + 10,
                              self.wallUp.get_width() - 10,
                              self.wallUp.get_height())
-        downRect = pygame.Rect(self.bird.wallx,
+        downRect = pygame.Rect(self.bird[birdID].wallx,
                                0 - self.gap - self.offset - 10,
                                self.wallDown.get_width() - 10,
                                self.wallDown.get_height())
-        if upRect.colliderect(self.bird.bird):
-            self.bird.dead = True
-        if downRect.colliderect(self.bird.bird):
-            self.bird.dead = True
-        if not 0 < self.bird.bird[1] < 720:
-            self.bird.bird[1] = 50
-            self.bird.birdY = 50
-            self.bird.dead = False
-            self.bird.counter = 0
-            self.bird.wallx = 350 + 50 * self.bird.id
+        if upRect.colliderect(self.bird[birdID].bird):
+            self.bird[birdID].dead = True
+        if downRect.colliderect(self.bird[birdID].bird):
+            self.bird[birdID].dead = True
+        if not 0 < self.bird[birdID].bird[1] < 720:
+            self.bird[birdID].bird[1] = 50
+            self.bird[birdID].birdY = 50
+            self.bird[birdID].dead = False
+            self.bird[birdID].counter = 0
+            self.bird[birdID].wallx = 350 + 50 * self.bird[birdID].id
             self.offset = random.randint(-110, 110)
-            self.bird.gravity = 5
+            self.bird[birdID].gravity = 5
 
     def run(self):
         clock = pygame.time.Clock()
         pygame.font.init()
         font = pygame.font.SysFont("Arial", 50)
+        birdID = 0
         while True:
             clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if (event.type == pygame.KEYDOWN ) and not self.bird.dead: #or event.type == pygame.MOUSEBUTTONDOWN
+                if (event.type == pygame.KEYDOWN ) and not self.bird[birdID].dead: #or event.type == pygame.MOUSEBUTTONDOWN
                     if(event.key == K_UP) :
-                        self.bird.jump = 17
-                        self.bird.gravity = 5
-                        self.bird.jumpSpeed = 10
+                        self.bird[birdID].jump = 17
+                        self.bird[birdID].gravity = 5
+                        self.bird[birdID].jumpSpeed = 10
 
             self.screen.fill((255, 255, 255))
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(self.wallUp,
-                             (self.bird.wallx, 360 + self.gap - self.offset))
+                             (self.bird[birdID].wallx, 360 + self.gap - self.offset))
             self.screen.blit(self.wallDown,
-                             (self.bird.wallx, 0 - self.gap - self.offset))
-            self.screen.blit(font.render(str(self.bird.counter),
+                             (self.bird[birdID].wallx, 0 - self.gap - self.offset))
+            self.screen.blit(font.render(str(self.bird[birdID].counter),
                                          -1,
                                          (255, 255, 255)),
                              (200, 50))
-            if self.bird.dead:
-                self.bird.sprite = 2
-            elif self.bird.jump:
-                self.bird.sprite = 1
-            self.screen.blit(self.bird.birdSprites[self.bird.sprite], (70, self.bird.birdY))
-            if not self.bird.dead:
-                self.bird.sprite = 0
+            if self.bird[birdID].dead:
+                self.bird[birdID].sprite = 2
+            elif self.bird[birdID].jump:
+                self.bird[birdID].sprite = 1
+            self.screen.blit(self.bird[birdID].birdSprites[self.bird[birdID].sprite], (70, self.bird[birdID].birdY))
+            if not self.bird[birdID].dead:
+                self.bird[birdID].sprite = 0
             self.updateWalls()
             #maybe go throug array with id
-            self.birdUpdate()
+            
+            self.birdUpdate(birdID)
             pygame.display.update()
 
 if __name__ == "__main__":
