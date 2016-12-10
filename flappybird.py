@@ -4,6 +4,18 @@ import pygame
 from pygame.locals import *  # noqa
 import sys
 import random
+import serial
+
+
+ser = serial.Serial(
+
+        port='/dev/ttyAMA0',
+        baudrate = 9600,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout=0
+)
 
 
 class FlappyBird:
@@ -70,14 +82,28 @@ class FlappyBird:
         font = pygame.font.SysFont("Arial", 50)
         while True:
             clock.tick(60)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                if (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN) and not self.dead:
+            
+            bytesWaiting = ser.inWaiting()
+            if bytesWaiting == 14:
+                x=ser.read(14)
+                en_id = x[8:12]
+                state = x[4]
+                
+                if state.encode('hex') == '10' and not self.dead:
                     self.jump = 17
                     self.gravity = 5
                     self.jumpSpeed = 10
 
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                """
+                if (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN) and not self.dead:
+                    self.jump = 17
+                    self.gravity = 5
+                    self.jumpSpeed = 10
+                """
+                    
             self.screen.fill((255, 255, 255))
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(self.wallUp,
