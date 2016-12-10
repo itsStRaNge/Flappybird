@@ -7,8 +7,9 @@ import random
 numberOfPlayers = 2
 wallSpawn = 1000
 distanceOfBirds = 126
-keys = [K_UP,K_DOWN,K_RIGHT,K_LEFT]
+keys = [K_LEFT,K_RIGHT,K_UP,K_DOWN]
 names = ["nico","clemens","luis","jakob"]
+
 class Bird:
     def __init__(self,id):
 	self.id = id
@@ -35,7 +36,9 @@ class FlappyBird:
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
         self.gap = 130
         self.wallx = wallSpawn
+        self.counter = 1
         self.offset = random.randint(-110, 110)
+        self.deadBirds = [False for i in range(0,numberOfPlayers)]
         self.bird = [Bird(i) for i in range(0,numberOfPlayers)]
 
     def updateWalls(self):
@@ -44,6 +47,7 @@ class FlappyBird:
             self.wallx = wallSpawn
             self.bird[0].counter += 1
             self.offset = random.randint(-110, 110)
+            self.counter += 1
 
     def birdUpdate(self,birdID):
         if self.bird[birdID].jump:
@@ -67,13 +71,24 @@ class FlappyBird:
         if downRect.colliderect(self.bird[birdID].bird):
             self.bird[birdID].dead = True
         if not 0 < self.bird[birdID].bird[1] < 720:
-            self.bird[birdID].bird[1] = 50
-            self.bird[birdID].birdY = 50
-            self.bird[birdID].dead = False
-            self.bird[birdID].counter = 0
-            self.wallx = wallSpawn
-            self.offset = random.randint(-110, 110)
-            self.bird[birdID].gravity = 5
+            self.deadBirds[birdID] = True
+            self.flag = False
+            #check deadBirds array if every Bird is dead
+            for i in range(0,numberOfPlayers):
+                if(self.deadBirds[i] == False) :
+                    self.flag = True
+            #if every Bird is dead, reset
+            if(self.flag == False) :
+                for i in range(0,numberOfPlayers) :
+                    self.bird[i].bird[1] = 50
+                    self.bird[i].birdY = 50
+                    self.bird[i].dead = False
+                    self.bird[i].counter = 0
+                    self.bird[i].gravity = 5
+                    self.deadBirds[i] = False
+                self.wallx = wallSpawn
+                self.offset = random.randint(-110, 110)
+                self.counter = 0
 
     def run(self):
         clock = pygame.time.Clock()
@@ -95,7 +110,7 @@ class FlappyBird:
                         birdID = 2
                     elif (event.key == keys[3]) :
                         birdID = 3
-                    if(birdID != -1 and birdID < numberOfPlayers) :
+                    if(birdID != -1 and birdID < numberOfPlayers and not self.bird[birdID].dead) :
                         self.bird[birdID].jump = 17
                         self.bird[birdID].gravity = 5
                         self.bird[birdID].jumpSpeed = 10
@@ -107,7 +122,7 @@ class FlappyBird:
             self.screen.blit(self.wallDown,
                 (self.wallx, 0 - self.gap - self.offset))
             #maybe global counter and safe if dies
-            self.screen.blit(font.render(str(self.bird[0].counter),
+            self.screen.blit(font.render(str(self.counter),
                            -1,
                             (255, 255, 255)),
                             (200, 50))
