@@ -15,7 +15,7 @@ import serial
 
 
 class Wall:
-    def __init__(self, id):
+    def __init__(self, id, flappybird):
         self.wallUp = pygame.image.load("assets/bottom.png").convert_alpha()
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
         self.gap = 150
@@ -32,7 +32,8 @@ class Wall:
                                self.wallDown.get_height())
         self.movementType = 1
         self.directionOfMovement = 1
-        self.wallspeed = 2
+        self.wallspeed = 6
+        self.flappybird = flappybird
 
     def offsetMovement(self):
         # self.offset = random.randint(-110, 110)
@@ -69,6 +70,10 @@ class Wall:
             self.offset = random.randint(-110, 110)
             self.movementType = random.randint(1, 3)
             self.wallspeed += 0.2
+            self.flappybird.counter += 1
+            for i in range(0,numberOfPlayers):
+                if not self.flappybird.bird[i].dead:
+                    self.flappybird.bird[i].counter += 1
 
         if self.movementType == 2:
             self.updateGap()
@@ -97,13 +102,14 @@ class Wall:
                                     self.wallDown.get_height())
         self.movementType = 1
         self.directionOfMovement = 1
-        self.wallspeed = 2
+        self.wallspeed = 6
+        self.flappybird.counter = 0
 
 
 class Controller:
     def __init__(self):
         self.ser = serial.Serial(
-            port='/dev/tty.Bluetooth-Incoming-Port',
+            port='/dev/ttyAMA0',
             baudrate = 9600,
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_ONE,
@@ -123,7 +129,10 @@ class Controller:
                         flappyBird.bird[birdID].jump = 17
                         flappyBird.bird[birdID].gravity = 5
                         flappyBird.bird[birdID].jumpSpeed = 10
-            
+                        return 0
+                    elif flappyBird.bird[birdID].clickerID == clickerID.encode('hex') and flappyBird.bird[birdID].dead:
+                        return 1
+        return 0
 
 
 wallSpawn = 1000
@@ -172,8 +181,8 @@ class FlappyBird:
         self.deadBirds = [False for i in range(0,numberOfPlayers)]
         self.bird = [Bird(i) for i in range(0,numberOfPlayers)]
         self.savedBirds = [savedBirds(i) for i in range(0, numberOfPlayers)]
-        self.walls = [Wall(i) for i in range(0,numberOfWalls)]
-
+        self.walls = [Wall(i,self) for i in range(0,numberOfWalls)]
+        
 
 
 
@@ -204,7 +213,8 @@ class FlappyBird:
             #if every Bird is dead, reset
             if(self.flag == False) :
                 for i in range(0,numberOfPlayers) :
-                    self.crash()
+                    if i == 1:
+                        self.crash()
                     self.bird[i].bird[1] = 50
                     self.bird[i].birdY = 50
                     self.bird[i].dead = False
@@ -228,7 +238,8 @@ class FlappyBird:
         flag = False
         counter = 0
         while not flag:
-
+            print self.controller.update(self)
+            
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(fontBig.render("Highscores",
                                             -1,
@@ -250,6 +261,8 @@ class FlappyBird:
                     quit()
                 if event.type == pygame.KEYDOWN:
                     flag = True
+            if self.controller.update(self):
+                flag = True
 
             #display winning bird
             if counter<15:
