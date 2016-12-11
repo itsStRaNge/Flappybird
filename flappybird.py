@@ -6,7 +6,7 @@ import sys
 import random
 import shelve
 import operator
-import serial
+#import serial
 
 useSensors = False
 numberOfPlayers = 3
@@ -14,7 +14,9 @@ screenWidth = 1200
 numberOfWalls = 3
 wallSpawn = 1000
 distanceOfBirds = 126
+music = "music/main.mp3"
 clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
+keys = [K_UP,K_DOWN,K_RIGHT,K_LEFT]
 names = ["nico","clemens","luis","jakob"]
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
@@ -114,15 +116,16 @@ class Wall:
 
 class Controller:
     def __init__(self):
-        self.ser = serial.Serial(
-            port='/dev/ttyAMA0',
-            baudrate = 9600,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            bytesize=serial.EIGHTBITS,
-            timeout=0
-        )
-    def update(self,flappyBird):
+        if(useSensors == True):
+            self.ser = serial.Serial(
+                port='/dev/ttyAMA0',
+                baudrate = 9600,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                bytesize=serial.EIGHTBITS,
+                timeout=0
+            )
+    def updateSensor(self,flappyBird):
         numberOfBytesInInputBuffer = self.ser.inWaiting()
         if numberOfBytesInInputBuffer >= 14:
             receivedBytes = self.ser.read(14)
@@ -138,6 +141,25 @@ class Controller:
                         return 0
                     elif flappyBird.bird[birdID].clickerID == clickerID.encode('hex') and flappyBird.bird[birdID].dead:
                         return 1
+        return 0
+    def updateKeyboard(self,flappyBird):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if (event.type == pygame.KEYDOWN):  # and not self.bird[birdID].dead
+                birdID = -1
+                if (event.key == keys[0]):
+                    birdID = 0
+                elif (event.key == keys[1]):
+                    birdID = 1
+                elif (event.key == keys[2]):
+                    birdID = 2
+                elif (event.key == keys[3]):
+                    birdID = 3
+                if (birdID != -1 and birdID < numberOfPlayers and not flappyBird.bird[birdID].dead):
+                    flappyBird.bird[birdID].jump = 17
+                    flappyBird.bird[birdID].gravity = 5
+                    flappyBird.bird[birdID].jumpSpeed = 10
         return 0
 
 class savedBirds:
@@ -180,7 +202,11 @@ class FlappyBird:
         self.bird = [Bird(i) for i in range(0,numberOfPlayers)]
         self.savedBirds = [savedBirds(i) for i in range(0, numberOfPlayers)]
         self.walls = [Wall(i,self) for i in range(0,numberOfWalls)]
-        
+
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load(music)
+        pygame.mixer.music.play(-1)
 
 
 
@@ -203,6 +229,7 @@ class FlappyBird:
                 self.bird[birdID].dead = True
         if not 0 < self.bird[birdID].bird[1] < 720:
             self.deadBirds[birdID] = True
+            self.bird[birdID].birdY = 800
             self.flag = False
             #check deadBirds array if every Bird is dead
             for i in range(0,numberOfPlayers):
@@ -236,8 +263,10 @@ class FlappyBird:
         flag = False
         counter = 0
         while not flag:
-            print self.controller.update(self)
-            
+            if(useSensors == True):
+                print self.controller.updateSensor(self)
+            else:
+                print self.controller.updateKeyboard(self)
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(fontBig.render("Highscores",
                                             -1,
@@ -259,9 +288,12 @@ class FlappyBird:
                     quit()
                 if event.type == pygame.KEYDOWN:
                     flag = True
-            if self.controller.update(self):
-                flag = True
-
+            if(useSensors == True):
+                if self.controller.updateSensor(self):
+                    flag = True
+            else:
+                if self.controller.updateKeyboard(self):
+                    flag = True
             #display winning bird
             if counter<15:
                 self.screen.blit(pygame.transform.scale(self.bird[displayScore[0].id].birdSprites[0],(200,200)), (400, 200))
@@ -295,11 +327,13 @@ class FlappyBird:
         while True:
             clock.tick(60)
 
-            self.controller.update(self)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
+            if(useSensors == True):
+                self.controller.updateSensor(self)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+            else:
+                self.controller.updateKeyboard(self)
 
             self.screen.fill((255, 255, 255))
             self.screen.blit(self.background, (0, 0))
