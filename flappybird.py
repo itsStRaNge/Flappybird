@@ -15,13 +15,17 @@ numberOfWalls = 3
 wallSpawn = 1000
 distanceOfBirds = 126
 music = "music/main.mp3"
-clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
-keys = [K_UP,K_DOWN,K_RIGHT,K_LEFT]
-names = ["nico","clemens","luis","jakob"]
+#clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
+#keys = [K_UP,K_DOWN,K_RIGHT,K_LEFT]
+#names = ["nico","clemens","luis","jakob"]
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-
+class Players:
+    clickerIDs = ["01a7fd15", "01a7fe21", "01a7c30b"]
+    keys = [K_UP, K_DOWN, K_RIGHT, K_LEFT]
+    names = ["nico", "clemens", "luis", "jakob"]
+    colors = [(0,0,255),(0,255,0),(255,0,0),(120,0,120)]
 
 class Wall:
     def __init__(self, id, flappybird):
@@ -148,13 +152,13 @@ class Controller:
                 sys.exit()
             if (event.type == pygame.KEYDOWN):  # and not self.bird[birdID].dead
                 birdID = -1
-                if (event.key == keys[0]):
+                if (event.key == Players.keys[0]):
                     birdID = 0
-                elif (event.key == keys[1]):
+                elif (event.key == Players.keys[1]):
                     birdID = 1
-                elif (event.key == keys[2]):
+                elif (event.key == Players.keys[2]):
                     birdID = 2
-                elif (event.key == keys[3]):
+                elif (event.key == Players.keys[3]):
                     birdID = 3
                 if (birdID != -1 and birdID < numberOfPlayers and not flappyBird.bird[birdID].dead):
                     flappyBird.bird[birdID].jump = 17
@@ -171,21 +175,21 @@ class savedBirds:
 class Bird:
     def __init__(self,id):
         self.id = id
-        self.name = names[id]
+        self.name = Players.names[id]
+        self.color = Players.colors[id]
         self.positionX = distanceOfBirds * id + 70
         self.bird = pygame.Rect(self.positionX, 50, 50, 50)
         self.birdSprites = [pygame.image.load("assets/"+str(id)+"_fly1.png").convert_alpha(),
                             pygame.image.load("assets/"+str(id)+"_fly2.png").convert_alpha(),
                             pygame.image.load("assets/dead.png")]
         self.birdY = 350
-        self.clickerID = clickerIDs[id]
+        self.clickerID = Players.clickerIDs[id]
         self.dead = False
         self.sprite = 0
         self.jump = 0
         self.jumpSpeed = 10
         self.gravity = 10
         self.counter = 0
-
 
 class FlappyBird:
     def __init__(self):
@@ -350,6 +354,10 @@ class FlappyBird:
                 elif self.bird[i].jump:
                     self.bird[i].sprite = 1
                 self.screen.blit(self.bird[i].birdSprites[self.bird[i].sprite], (self.bird[i].positionX, self.bird[i].birdY))
+                self.screen.blit(font.render(str(self.bird[i].name),
+                                 -1,
+                                 self.bird[i].color),
+                                (self.bird[i].positionX, self.bird[i].birdY-50))
                 if not self.bird[i].dead:
                     self.bird[i].sprite = 0
                 self.birdUpdate(i)
