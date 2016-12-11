@@ -4,13 +4,20 @@ import pygame
 from pygame.locals import *  # noqa
 import sys
 import random
-
-numberOfPlayers = 3
-screenWidth = 1200
-numberOfWalls = 3
 import shelve
 import operator
 import serial
+
+useSensors = False
+numberOfPlayers = 3
+screenWidth = 1200
+numberOfWalls = 3
+wallSpawn = 1000
+distanceOfBirds = 126
+clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
+names = ["nico","clemens","luis","jakob"]
+pygame.font.init()
+font = pygame.font.SysFont("Arial", 30)
 
 
 
@@ -105,7 +112,6 @@ class Wall:
         self.wallspeed = 6
         self.flappybird.counter = 0
 
-
 class Controller:
     def __init__(self):
         self.ser = serial.Serial(
@@ -134,20 +140,12 @@ class Controller:
                         return 1
         return 0
 
-
-wallSpawn = 1000
-distanceOfBirds = 126
-clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
-names = ["nico","clemens","luis","jakob"]
-
-pygame.font.init()
-font = pygame.font.SysFont("Arial", 30)
-
 class savedBirds:
     def __init__(self,id):
         self.counter = 0
         self.id = id
         self.name = ""
+
 class Bird:
     def __init__(self,id):
         self.id = id
@@ -324,7 +322,6 @@ class FlappyBird:
             for i in range(0, numberOfWalls):
                 self.walls[i].updateWallPosition()
             pygame.display.update()
-
 
 if __name__ == "__main__":
     FlappyBird().run()
