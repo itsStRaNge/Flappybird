@@ -9,8 +9,9 @@ import operator
 #import serial
 
 useSensors = False
-numberOfPlayers = 3
+numberOfPlayers = 1
 screenWidth = 1200
+screenHeight = 640
 numberOfWalls = 3
 wallSpawn = 1000
 distanceOfBirds = 126
@@ -32,7 +33,7 @@ class Wall:
         self.wallUp = pygame.image.load("assets/bottom.png").convert_alpha()
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
         self.gap = 150
-        self.offset = random.randint(-110, 110)
+        self.offset = random.randint(-(screenHeight*0.2), screenHeight*0.4)
         self.id = id
         self.wallx = screenWidth+ self.id*300
         self.upRect = pygame.Rect(self.wallx,
@@ -50,16 +51,16 @@ class Wall:
 
     def offsetMovement(self):
         # self.offset = random.randint(-110, 110)
-        if self.directionOfMovement == 1 and self.offset < 110:
+        if self.directionOfMovement == 1 and self.offset < screenHeight*0.4:
             self.offset += 1
 
-            if self.offset >= 110:
+            if self.offset >= -(screenHeight*0.2):
                 self.directionOfMovement = 2
 
         elif self.directionOfMovement == 2:
             self.offset -= 1
 
-            if self.offset <= -110:
+            if self.offset <=  -(screenHeight*0.2):
                 self.directionOfMovement = 1
 
     def updateGap(self):
@@ -80,7 +81,7 @@ class Wall:
 
         if self.wallx < -80:
             self.wallx = screenWidth
-            self.offset = random.randint(-110, 110)
+            self.offset = random.randint(-(screenHeight*0.2), screenHeight*0.4)
             self.movementType = random.randint(1, 3)
             self.wallspeed += 0.2
             self.flappybird.counter += 1
@@ -103,7 +104,7 @@ class Wall:
 
     def resetWalls(self):
         self.gap = 150
-        self.offset = random.randint(-110, 110)
+        self.offset = random.randint(-(screenHeight*0.2), screenHeight*0.4)
         self.wallx = screenWidth+ self.id*300
         self.upRect = pygame.Rect(self.wallx,
                                   360 + self.gap - self.offset + 10,
@@ -193,7 +194,7 @@ class Bird:
 
 class FlappyBird:
     def __init__(self):
-        self.screen = pygame.display.set_mode((screenWidth, 720))
+        self.screen = pygame.display.set_mode((screenWidth, screenHeight))
         self.background = pygame.image.load("assets/background.png").convert()
         self.wallUp = pygame.image.load("assets/bottom.png").convert_alpha()
         self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
