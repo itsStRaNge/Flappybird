@@ -9,22 +9,19 @@ import operator
 #import serial
 
 useSensors = False
-numberOfPlayers = 1
+numberOfPlayers = 2
 screenWidth = 1200
 screenHeight = 640
 numberOfWalls = 3
 wallSpawn = 1000
 distanceOfBirds = 126
 music = "music/main.mp3"
-#clickerIDs = ["01a7fd15","01a7fe21","01a7c30b"]
-#keys = [K_UP,K_DOWN,K_RIGHT,K_LEFT]
-#names = ["nico","clemens","luis","jakob"]
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
 class Players:
     clickerIDs = ["01a7fd15", "01a7fe21", "01a7c30b"]
-    keys = [K_UP, K_DOWN, K_RIGHT, K_LEFT]
+    keys = [K_RIGHT,K_LEFT, K_DOWN, K_UP]
     names = ["nico", "clemens", "luis", "jakob"]
     colors = [(0,0,255),(0,255,0),(255,0,0),(120,0,120)]
 
@@ -35,7 +32,7 @@ class Wall:
         self.gap = 150
         self.offset = random.randint(-(screenHeight*0.2), screenHeight*0.4)
         self.id = id
-        self.wallx = screenWidth+ self.id*300
+        self.wallx = screenWidth+ self.id*screenWidth/numberOfWalls
         self.upRect = pygame.Rect(self.wallx,
                              360 + self.gap - self.offset + 10,
                              self.wallUp.get_width() - 10,
@@ -105,7 +102,7 @@ class Wall:
     def resetWalls(self):
         self.gap = 150
         self.offset = random.randint(-(screenHeight*0.2), screenHeight*0.4)
-        self.wallx = screenWidth+ self.id*300
+        self.wallx = screenWidth+ self.id*screenWidth/numberOfWalls
         self.upRect = pygame.Rect(self.wallx,
                                   360 + self.gap - self.offset + 10,
                                   self.wallUp.get_width() - 10,
@@ -269,9 +266,11 @@ class FlappyBird:
         counter = 0
         while not flag:
             if(useSensors == True):
-                print self.controller.updateSensor(self)
+                #print self.controller.updateSensor(self)
+                self.controller.updateSensor(self)
             else:
-                print self.controller.updateKeyboard(self)
+                #print self.controller.updateKeyboard(self)
+                self.controller.updateKeyboard(self)
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(fontBig.render("Highscores",
                                             -1,
@@ -330,7 +329,7 @@ class FlappyBird:
         clock = pygame.time.Clock()
         global font
         while True:
-            clock.tick(60)
+            clock.tick(30)
 
             if(useSensors == True):
                 self.controller.updateSensor(self)
