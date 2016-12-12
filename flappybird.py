@@ -9,7 +9,7 @@ import operator
 #import serial
 
 useSensors = False
-numberOfPlayers = 2
+numberOfPlayers = 1
 screenWidth = 1200
 screenHeight = 640
 numberOfWalls = 3
@@ -22,7 +22,7 @@ font = pygame.font.SysFont("Arial", 30)
 class Players:
     clickerIDs = ["01a7fd15", "01a7fe21", "01a7c30b"]
     keys = [K_RIGHT,K_LEFT, K_DOWN, K_UP]
-    names = ["nico", "clemens", "luis", "jakob"]
+    names = ["Donald", "clemens", "luis", "jakob"]
     colors = [(0,0,255),(0,255,0),(255,0,0),(120,0,120)]
 
 class Wall:
