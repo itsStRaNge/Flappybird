@@ -9,7 +9,7 @@ import operator
 #import serial
 
 useSensors = False
-numberOfPlayers = 1
+numberOfPlayers = 2
 screenWidth = 1200
 screenHeight = 640
 numberOfWalls = 3
