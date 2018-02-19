@@ -2,40 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c05915d7-78a3-440c-81f4-b81f16afef80" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bird/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bird/bird.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bird/config.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/controller/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/controller/config.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/controller/controller.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/game/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/game/config.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/game/flappybird.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/wall/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/wall/config.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/birds.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/config.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/controller.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/flappybird.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/player.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/score.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/score.txt.db" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/FlappyBird.iml" afterPath="$PROJECT_DIR$/.idea/FlappyBird.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/0.png" afterPath="$PROJECT_DIR$/bird/assets/0.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/0_fly1.png" afterPath="$PROJECT_DIR$/bird/assets/0_fly1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/0_fly2.png" afterPath="$PROJECT_DIR$/bird/assets/0_fly2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/1_fly1.png" afterPath="$PROJECT_DIR$/bird/assets/1_fly1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/1_fly2.png" afterPath="$PROJECT_DIR$/bird/assets/1_fly2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/2_fly1.png" afterPath="$PROJECT_DIR$/bird/assets/2_fly1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/2_fly2.png" afterPath="$PROJECT_DIR$/bird/assets/2_fly2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/background.png" afterPath="$PROJECT_DIR$/game/assets/background.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/bottom.png" afterPath="$PROJECT_DIR$/wall/assets/bottom.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/dead.png" afterPath="$PROJECT_DIR$/bird/assets/dead.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/assets/top.png" afterPath="$PROJECT_DIR$/wall/assets/top.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/music/main.mp3" afterPath="$PROJECT_DIR$/game/music/main.mp3" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/wall.py" afterPath="$PROJECT_DIR$/wall/wall.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/TODO.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -72,14 +39,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bird.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bird.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bird/bird.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="490">
-              <caret line="54" column="28" lean-forward="false" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
+            <state relative-caret-position="680">
+              <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TODO.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/TODO.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="43" lean-forward="false" selection-start-line="2" selection-start-column="43" selection-end-line="2" selection-end-column="43" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -208,6 +185,7 @@
         <option value="$PROJECT_DIR$/bird/bird.py" />
         <option value="$PROJECT_DIR$/game/flappybird.py" />
         <option value="$PROJECT_DIR$/bird/config.py" />
+        <option value="$PROJECT_DIR$/TODO.txt" />
       </list>
     </option>
   </component>
@@ -772,11 +750,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bird/bird.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="54" column="28" lean-forward="false" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
+        <state relative-caret-position="680">
+          <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TODO.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="43" lean-forward="false" selection-start-line="2" selection-start-column="43" selection-end-line="2" selection-end-column="43" />
+          <folding />
         </state>
       </provider>
     </entry>
