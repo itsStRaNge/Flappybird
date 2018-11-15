@@ -6,6 +6,7 @@ import os
 
 ABS_PATH = os.path.dirname(__file__)
 
+
 class Wall:
     def __init__(self, id, flappy_bird):
         self.wallUp = pygame.image.load(ABS_PATH + "/assets/bottom.png").convert_alpha()
@@ -78,23 +79,6 @@ class Wall:
                                     config.wall_down_spawn - self.gap - self.offset - 10,
                                     self.wallDown.get_width() - 10,
                                     self.wallDown.get_height())
-
-    def reset_walls(self):
-        self.gap = 150
-        self.offset = random.randint(-(gc.screenHeight*0.2), gc.screenHeight*0.4)
-        self.wall_x = gc.screenWidth + self.id * gc.screenWidth / config.numberOfWalls
-        self.upRect = pygame.Rect(self.wall_x,
-                                  config.wall_up_spawn + self.gap - self.offset + 10,
-                                  self.wallUp.get_width() - 10,
-                                  self.wallUp.get_height())
-        self.downRect = pygame.Rect(self.wall_x,
-                                    config.wall_down_spawn - self.gap - self.offset - 10,
-                                    self.wallDown.get_width() - 10,
-                                    self.wallDown.get_height())
-        self.movementType = 1
-        self.directionOfMovement = 1
-        self.wall_speed = 6
-        self.flappybird.counter = 0
 
     def collision(self, bird):
         if self.upRect.colliderect(bird.hit_box):

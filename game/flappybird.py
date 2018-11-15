@@ -33,36 +33,28 @@ class FlappyBird:
 
         self.clock = pygame.time.Clock()
 
-    def bird_update(self):
+    def update_birds(self):
 
-        all_dead_flag = False
+        all_dead_flag = True
         for bird in self.bird_list:
             for wall in self.wall_list:
                 bird.dead = wall.collision(bird)
                 # bird.update has to be after wall collision otherwise dead mechanism will be overwritten
                 bird.update()
                 if not bird.dead:
-                    all_dead_flag = True
+                    all_dead_flag = False
 
         # if every Bird is dead show highscore
-        if not all_dead_flag:
+        if all_dead_flag:
             self.highscore()
 
     def reset(self):
-        for bird in self.bird_list:
-            bird.hit_box[1] = 50
-            bird.positionY = 50
-            bird.dead = False
-            bird.counter = 0
-            bird.gravity = 5
-            bird.dead = False
-
-        for wall in self.wall_list:
-            wall.reset_walls()
+        self.bird_list = [Bird(i) for i in range(0, config.numberOfPlayers)]
+        self.wall_list = [Wall(i, self) for i in range(0, wc.numberOfWalls)]
         self.counter = 0
 
     def highscore(self):
-        fontBig = pygame.font.SysFont("Arial", 50,1)
+        fontBig = pygame.font.SysFont("Arial", 50, 1)
         # insert highscore window, pause game till buttonpress
         displayScore = [] #self.highscore() #score list of all birds
 
@@ -100,18 +92,18 @@ class FlappyBird:
         # copy all birds to savedBirds
         d = shelve.open('score.txt')  # here you will save the score variable
         # d['highscores'] = self.savedBirds
-        currentScore = d['highscores']
+        current_score = d['highscores']
         for i in range(0,len(self.savedBirds)):
             self.savedBirds[i].counter = self.bird_list[i].counter
             self.savedBirds[i].name = self.bird_list[i].name
-            currentScore.append(self.savedBirds[i])
+            current_score.append(self.savedBirds[i])
 
-        currentScore = sorted(currentScore, key=operator.attrgetter('counter'), reverse=True)
-        currentScore = currentScore[0:4]
-        d['highscores'] = currentScore
+        current_score = sorted(current_score, key=operator.attrgetter('counter'), reverse=True)
+        current_score = current_score[0:4]
+        d['highscores'] = current_score
         d.close()
 
-        return currentScore
+        return current_score
 
     def run(self):
         while True:
@@ -136,7 +128,7 @@ class FlappyBird:
 
             # render birds
             for bird in self.bird_list:
-                self.bird_update()
+                self.update_birds()
                 self.screen.blit(bird.birdSprites[bird.sprite], (bird.positionX, bird.positionY))
                 self.screen.blit(self.font.render(str(bird.name),
                                  -1,

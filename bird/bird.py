@@ -26,33 +26,42 @@ class Bird:
                             pygame.image.load(ABS_PATH + "/assets/dead.png")]
         self.positionY = config.start_y
         self.clickerID = cc.click_ids[id]
-        self.dead = False
         self.sprite = 0
-        self.jump = 0
-        self.jumpSpeed = config.jump_speed
-        self.gravity = gc.gravity_start
+        self.dead = False
+        self.jump = False
         self.counter = 0
+        self.velocity = 0
+        self.acceleration = 0
 
     def jump_trigger(self):
         if not self.dead:
-            self.jump = config.jump
-            self.gravity = gc.gravity_start
-            self.jumpSpeed = config.jump_speed
+            self.acceleration = 0
+            self.velocity = config.jump_velocity
+            self.jump = True
 
     def update(self):
-        if self.jump:
-            self.jumpSpeed -= config.jump_speed_gain
-            self.positionY -= self.jumpSpeed
-            self.jump -= config.jump_gain
-        else:
-            self.positionY += self.gravity
-            self.gravity += gc.gravity_gain
+
+        self.positionY -= self.calculate_movement()
+
+        print("y = %s | v = %s | a = %s" % (self.positionY, self.velocity, self.acceleration))
+
         self.hit_box[1] = self.positionY
 
         if not 0 < self.hit_box[1] < gc.screenHeight:
             self.dead = True
             self.positionY = gc.screenHeight + 200
         self.select_sprite()
+
+    def calculate_movement(self):
+        if abs(self.velocity) < config.velocity_max:
+            if self.jump and self.velocity < 0:
+                self.acceleration = 0
+                self.jump = False
+            self.acceleration -= gc.gravity_acceleration
+            self.velocity += self.acceleration
+        else:
+            self.velocity = config.velocity_max * (self.velocity / abs(self.velocity))
+        return self.velocity
 
     def select_sprite(self):
         if self.dead:
